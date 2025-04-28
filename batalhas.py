@@ -28,7 +28,10 @@ class Batalhas:
             else:
                 return False
         return True   
-         
+    
+    def add_batalha_ja_feita(self,batalha):
+        self.batalhas_ja_feitas.append(batalha)
+       
     def sortea_pares(self, startups : list):
         random.shuffle(startups)
         return [[startups[i],startups[i+1]] for i in range(0,len(startups),2)]
@@ -40,7 +43,9 @@ class Batalhas:
         if self.__verifica_se_startups_ja_tem_reg_do_ev(par,id_evento):
             return id_evento
         return -1
-        
+    
+    def get_feitas(self):
+        return self.batalhas_ja_feitas
         
         
 

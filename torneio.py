@@ -66,15 +66,16 @@ def menu_inicial():
     print('1 - Cadastrar Startup')
     print('2 - Sair')
 
-def menu_escolha_de_batalha(pares):
+def menu_escolha_de_batalha(pares,batalhas):
     print('Escolha entre essas batalhas')
     for ind, par in enumerate(pares):
-        print(f'Batalha {ind} - {par[0].nome} vs {par[1].nome}')
+        if par not in batalhas.get_feitas():  
+            print(f'Batalha {ind} - {par[0].nome} vs {par[1].nome}')
         
 def menu_pos_selecao_batalha(op, pares):
     
     print('Batalha selecionada!!')
-    print(f'Par - {pares[op][0].nome} vs {pares[op][1].nome}')
+    print(f'Par - {pares[op][0].nome} ({pares[op][0].pontos}p) vs {pares[op][1].nome} ({pares[op][1].pontos}p)')
     print('Escolha umas das startup respectivamente (0-1)')
     print('Para atribuir um evento!!')
 
@@ -138,15 +139,14 @@ while True:
                     menu_de_escolha_eventos(mod_menu_ev)
                     id_evento = int(input(f'Digite aqui para a startup {startup}: '))
                     limpar_console() 
-                    id_ev_ja_reg_nas_startups = b.batalhar(id_evento,par,startup)
+                    id_ev_ja_reg_nas_startups = b.verifica_atribuicao_de_ev(id_evento,par,startup)
                     verifica_se_ja_foi_reg_evento_nas_startups(id_ev_ja_reg_nas_startups,mod_menu_ev)
                     menu_pos_selecao_batalha(op,pares)
                     if min_regs_atingido == 1:
                         term_bat = verifica_termino_da_batalha()
                         if term_bat:
+                            b.add_batalha_ja_feita(par)
                             break
-                    else:
-                        print('sai')
                     while True:
                         startup = int(input('Digite aqui a proxima startup: '))
                         min_regs_atingido = 1
