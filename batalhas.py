@@ -1,0 +1,47 @@
+import random
+
+class Batalhas:
+    
+    def __init__(self):
+        self.eventos = {'pconv' : 6, 'prodcbugs' : -4, 'btracaousuarios' : 3, 'invirritado' : -6, 'fakenews' : -8}
+        self.batalhas_ja_feitas = []
+    
+    def __validacao_id_evento(self,id):
+        return id <= 5 and id >= 1
+    
+    def __verifica_se_nao_existe_evento(self,ev,startup):
+        return ev not in startup.eventos
+    
+    def __verifica_se_startups_ja_tem_reg_do_ev(self,par,id_evento):
+        ev = list(self.eventos.keys())[id_evento-1]
+        return ev in par[0].eventos and ev in par[1].eventos
+    
+    def verifica_se_nao_tem_como_reg_evs(self, par):
+        return par[0].eventos in list(self.eventos.keys()) and par[1].eventos in list(self.eventos.keys())
+    
+    def __atribuicao_evento(self,startup,id_evento):
+        if self.__validacao_id_evento(id_evento):
+            ev = list(self.eventos.keys())[id_evento-1]
+            if self.__verifica_se_nao_existe_evento(ev,startup):
+                startup.eventos.append(ev)
+                startup.pontos += self.eventos.get(ev)
+            else:
+                return False
+        return True   
+         
+    def sortea_pares(self, startups : list):
+        random.shuffle(startups)
+        return [[startups[i],startups[i+1]] for i in range(0,len(startups),2)]
+    
+    def batalhar(self,id_evento,par,num_startup):
+        startup_escolhida = par[num_startup]
+        if not self.__atribuicao_evento(startup_escolhida,id_evento):
+            print('EVENTO JA REGISTRADO NAS STARTUPS!!')
+        if self.__verifica_se_startups_ja_tem_reg_do_ev(par,id_evento):
+            return id_evento
+        return -1
+        
+        
+        
+
+        
