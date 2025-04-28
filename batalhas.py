@@ -33,7 +33,7 @@ class Batalhas:
         random.shuffle(startups)
         return [[startups[i],startups[i+1]] for i in range(0,len(startups),2)]
     
-    def batalhar(self,id_evento,par,num_startup):
+    def verifica_atribuicao_de_ev(self,id_evento,par,num_startup):
         startup_escolhida = par[num_startup]
         if not self.__atribuicao_evento(startup_escolhida,id_evento):
             print('EVENTO JA REGISTRADO NAS STARTUPS!!')

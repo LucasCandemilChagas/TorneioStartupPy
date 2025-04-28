@@ -19,8 +19,14 @@ def defini_quantidade_startups_TESTE():
 def verifica_quant_de_startups(startups):
     return len(startups) >= 4 and len(startups) % 2 == 0
 
+def verifica_termino_da_batalha():
+    op = input('Deseja terminar batalha? s/qualquer outra tecla: ').lower()
+    if op == 's':
+        return True
+    return False
+
 def verifica_saida():
-    op = input('Deseja terminar? s/qualquer outra tecla: ').lower()
+    op = input('Deseja sair? s/qualquer outra tecla: ').lower()
     if op == 's':
         return True
     return False
@@ -53,7 +59,7 @@ def cadastra_startups():
                 break
         
     return startups
-               
+           
 def menu_inicial():
     print('Startup Rush!!')
     print('Escolha entre as opcoes abaixo:')
@@ -136,9 +142,8 @@ while True:
                     verifica_se_ja_foi_reg_evento_nas_startups(id_ev_ja_reg_nas_startups,mod_menu_ev)
                     menu_pos_selecao_batalha(op,pares)
                     if min_regs_atingido == 1:
-                        sair = verifica_saida()
-                        if sair:
-                            quer_sair = 1
+                        term_bat = verifica_termino_da_batalha()
+                        if term_bat:
                             break
                     else:
                         print('sai')
