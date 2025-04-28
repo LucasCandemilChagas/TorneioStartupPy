@@ -5,6 +5,8 @@ class Batalhas:
     def __init__(self):
         self.eventos = {'pconv' : 6, 'prodcbugs' : -4, 'btracaousuarios' : 3, 'invirritado' : -6, 'fakenews' : -8}
         self.batalhas_ja_feitas = []
+        self.pares = []
+        self.par_escolhido = []
     
     def __validacao_id_evento(self,id):
         return id <= 5 and id >= 1
@@ -12,12 +14,12 @@ class Batalhas:
     def __verifica_se_nao_existe_evento(self,ev,startup):
         return ev not in startup.eventos
     
-    def __verifica_se_startups_ja_tem_reg_do_ev(self,par,id_evento):
+    def __verifica_se_startups_ja_tem_reg_do_ev(self,id_evento):
         ev = list(self.eventos.keys())[id_evento-1]
-        return ev in par[0].eventos and ev in par[1].eventos
+        return ev in self.par_escolhido[0].eventos and ev in self.par_escolhido[1].eventos
     
-    def verifica_se_nao_tem_como_reg_evs(self, par):
-        return par[0].eventos in list(self.eventos.keys()) and par[1].eventos in list(self.eventos.keys())
+    def verifica_se_nao_tem_como_reg_evs(self):
+        return self.par_escolhido[0].eventos in list(self.eventos.keys()) and self.par_escolhido[1].eventos in list(self.eventos.keys())
     
     def __atribuicao_evento(self,startup,id_evento):
         if self.__validacao_id_evento(id_evento):
@@ -29,20 +31,29 @@ class Batalhas:
                 return False
         return True   
     
-    def add_batalha_ja_feita(self,batalha):
-        self.batalhas_ja_feitas.append(batalha)
+    def add_batalha_ja_feita(self):
+        self.batalhas_ja_feitas.append(self.par_escolhido)
        
     def sortea_pares(self, startups : list):
         random.shuffle(startups)
-        return [[startups[i],startups[i+1]] for i in range(0,len(startups),2)]
+        self.pares = [[startups[i],startups[i+1]] for i in range(0,len(startups),2)]
     
-    def verifica_atribuicao_de_ev(self,id_evento,par,num_startup):
-        startup_escolhida = par[num_startup]
+    def set_par_escolhido(self, id_par):
+        self.par_escolhido = self.pares[id_par]
+    
+    def verifica_atribuicao_de_ev(self,id_evento,num_startup):
+        startup_escolhida = self.par_escolhido[num_startup]
         if not self.__atribuicao_evento(startup_escolhida,id_evento):
             print('EVENTO JA REGISTRADO NAS STARTUPS!!')
-        if self.__verifica_se_startups_ja_tem_reg_do_ev(par,id_evento):
+        if self.__verifica_se_startups_ja_tem_reg_do_ev(id_evento):
             return id_evento
         return -1
+    
+    def get_pares(self):
+        return self.pares
+    
+    def get_par_escolhido(self):
+        return self.par_escolhido
     
     def get_feitas(self):
         return self.batalhas_ja_feitas

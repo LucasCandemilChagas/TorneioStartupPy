@@ -122,15 +122,16 @@ while True:
         comecar_batalha = int(input('Digite 1 para comecar as batalhas: '))
         if comecar_batalha == 1:
             b = Batalhas()
+            b.sortea_pares(startups_list)
+            
             while True:
-                pares = b.sortea_pares(startups_list)
-                
+                pares = b.get_pares()
                 limpar_console()
-                menu_escolha_de_batalha(pares)
-                op = int(input('Digite aqui a batalha desejada: '))
-                par = pares[op]
+                menu_escolha_de_batalha(pares,b)
+                id_par = int(input('Digite aqui a batalha desejada: '))
+                b.set_par_escolhido(id_par)
                 limpar_console()
-                menu_pos_selecao_batalha(op,pares)
+                menu_pos_selecao_batalha(id_par,pares)
                 startup = int(input('Digite aqui: '))
                 
                 mod_menu_ev = [0,0,0,0,0]
@@ -139,23 +140,23 @@ while True:
                     menu_de_escolha_eventos(mod_menu_ev)
                     id_evento = int(input(f'Digite aqui para a startup {startup}: '))
                     limpar_console() 
-                    id_ev_ja_reg_nas_startups = b.verifica_atribuicao_de_ev(id_evento,par,startup)
+                    id_ev_ja_reg_nas_startups = b.verifica_atribuicao_de_ev(id_evento,startup)
                     verifica_se_ja_foi_reg_evento_nas_startups(id_ev_ja_reg_nas_startups,mod_menu_ev)
-                    menu_pos_selecao_batalha(op,pares)
+                    menu_pos_selecao_batalha(id_par,pares)
                     if min_regs_atingido == 1:
                         term_bat = verifica_termino_da_batalha()
                         if term_bat:
-                            b.add_batalha_ja_feita(par)
+                            b.add_batalha_ja_feita()
                             break
                     while True:
                         startup = int(input('Digite aqui a proxima startup: '))
                         min_regs_atingido = 1
-                        if len(par[startup].eventos) == 5:
+                        if len(b.get_par_escolhido()[startup].eventos) == 5:
                             print('Startup tem todos os eventos ja!!')
                         else:
                             break
                         
-                        if b.verifica_se_nao_tem_como_reg_evs(par):
+                        if b.verifica_se_nao_tem_como_reg_evs():
                             break
                         
                     limpar_console() 
