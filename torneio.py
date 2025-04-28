@@ -71,14 +71,16 @@ def menu_escolha_de_batalha(pares,batalhas):
     print('Escolha entre essas batalhas')
     for ind, par in enumerate(pares):
         if par not in batalhas.get_feitas():  
-            print(f'Batalha {ind} - {par[0].nome} vs {par[1].nome}')
-        
+            print(f'Batalha {ind} - {par[0].nome} vs {par[1].nome}')   
+    print('Caso queira sair aperte Ctrl+C')
+    
 def menu_pos_selecao_batalha(op, pares):
     
     print('Batalha selecionada!!')
     print(f'Par - {pares[op][0].nome} ({pares[op][0].pontos}p) vs {pares[op][1].nome} ({pares[op][1].pontos}p)')
     print('Escolha umas das startup respectivamente (0-1)')
     print('Para atribuir um evento!!')
+    print('Caso queira sair aperte Ctrl+C')
 
 def menu_de_escolha_eventos(mod_menu_ev):
     limpar_console()  
@@ -103,15 +105,12 @@ def menu_de_escolha_eventos(mod_menu_ev):
         print('5 - Fake news no pitch')    
     else: 
         print('5 - Fake news no pitch (indisponivel)    REGISTRADO EM TODAS AS STARTUPS!!')    
-
-def display_vencedor(par):
+    print('Caso queira sair aperte Ctrl+C')
+    
+def display_vencedor(vencedor):
     print("Batalha finaizada!!!")
-    if par[0].pontos > par[1].pontos:
-        print(par[0].nome)  
-        print(f'Eh a vencedora!! Com {par[0].pontos}p')
-    else:
-        print(par[1].nome)  
-        print(f'Eh a vencedora!! Com {par[1].pontos}p')
+    print(vencedor.nome)  
+    print(f'Eh a vencedora!! Com {vencedor.pontos}p')
     
              
 
@@ -128,9 +127,14 @@ while True:
                 #startups_list = cadastra_startups()
                 print('Startups cadastradas!!')
                 break
+            elif op == 2:
+                quer_sair = 1
             else:
                 print('Numero Invalido!!')
         #############################################
+        
+        if quer_sair:
+            break
         
         comecar_batalha = int(input('Digite 1 para comecar as batalhas: '))
         if comecar_batalha == 1:
@@ -185,10 +189,9 @@ while True:
                 ##############################################################################        
                     
                 limpar_console()
-                display_vencedor(b.get_par_escolhido())
+                vencedor = b.get_vencedor_com_pontos_bonus()
+                display_vencedor(vencedor)
                 time.sleep(5) 
-                if quer_sair:
-                    break   
             ##########################################################################################                       
         print(pares)
         limpar_console() 

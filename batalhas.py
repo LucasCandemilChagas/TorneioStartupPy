@@ -21,6 +21,9 @@ class Batalhas:
     def verifica_se_nao_tem_como_reg_evs(self):
         return self.par_escolhido[0].eventos in list(self.eventos.keys()) and self.par_escolhido[1].eventos in list(self.eventos.keys())
     
+    def __verifica_se_startup1_pontos_maior_que_startup2(self):
+        return self.par_escolhido[0].pontos > self.par_escolhido[1].pontos
+    
     def __atribuicao_evento(self,startup,id_evento):
         if self.__validacao_id_evento(id_evento):
             ev = list(self.eventos.keys())[id_evento-1]
@@ -37,6 +40,15 @@ class Batalhas:
     def sortea_pares(self, startups : list):
         random.shuffle(startups)
         self.pares = [[startups[i],startups[i+1]] for i in range(0,len(startups),2)]
+    
+    def get_vencedor_com_pontos_bonus(self):
+        if self.__verifica_se_startup1_pontos_maior_que_startup2():
+            self.par_escolhido[0].pontos += 30
+            return self.par_escolhido[0]
+        else:
+            self.par_escolhido[1].pontos += 30
+            return self.par_escolhido[1]
+            
     
     def set_par_escolhido(self, id_par):
         self.par_escolhido = self.pares[id_par]
