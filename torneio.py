@@ -112,10 +112,11 @@ def display_vencedor(vencedor):
     print(vencedor.nome)  
     print(f'Eh a vencedora!! Com {vencedor.pontos}p')
     
-             
+def mostra_vencedores_de_rodada(venc_list):
+    for venc in venc_list:
+        print(f'{venc.nome} -> {venc.pontos}p')
 
 while True:
-    min_regs_atingido = 0 
     quer_sair = 0  
     try:
         # Cadastro das Startups ######################
@@ -142,6 +143,7 @@ while True:
             b.sortea_pares(startups_list)
             # Batalhas ################################################
             while True:
+                min_regs_atingido = 0 
                 pares = b.get_pares()
                 limpar_console()
                 menu_escolha_de_batalha(pares,b)
@@ -171,6 +173,7 @@ while True:
                                 print('Shark Fight iniciada!!')
                                 b.shark_fight()
                                 b.add_batalha_ja_feita()
+                                time.sleep(5)
                                 break
                     # Escolha da proxima Startup ##################################
                     while True:
@@ -190,10 +193,16 @@ while True:
                     
                 limpar_console()
                 vencedor = b.get_vencedor_com_pontos_bonus()
+                b.add_vencedor_na_list_vencedores(vencedor) 
                 display_vencedor(vencedor)
-                time.sleep(5) 
+                print("Por favor aguarde, NAO APERTE NENHUM BOTAO")
+                time.sleep(5)
+                if len(b.get_vencedores()) == len(pares):
+                    print("Vencedor(es) desta rodada sao: ")
+                    startups_list = b.get_vencedores()
+                    mostra_vencedores_de_rodada(startups_list)
+                    time.sleep(10)
             ##########################################################################################                       
-        print(pares)
         limpar_console() 
     except ValueError:
         continue

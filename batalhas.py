@@ -7,6 +7,7 @@ class Batalhas:
         self.batalhas_ja_feitas = []
         self.pares = []
         self.par_escolhido = []
+        self.vencedores = []
     
     def __validacao_id_evento(self,id):
         return id <= 5 and id >= 1
@@ -38,8 +39,11 @@ class Batalhas:
         self.batalhas_ja_feitas.append(self.par_escolhido)
        
     def sortea_pares(self, startups : list):
-        random.shuffle(startups)
-        self.pares = [[startups[i],startups[i+1]] for i in range(0,len(startups),2)]
+        if len(startups) > 2:
+            random.shuffle(startups)
+            self.pares = [[startups[i],startups[i+1]] for i in range(0,len(startups),2)]
+        else:
+            self.pares = [startups]
     
     def get_vencedor_com_pontos_bonus(self):
         if self.__verifica_se_startup1_pontos_maior_que_startup2():
@@ -49,14 +53,19 @@ class Batalhas:
             self.par_escolhido[1].pontos += 30
             return self.par_escolhido[1]
             
+    def add_vencedor_na_list_vencedores(self,vencedor):
+        self.vencedores.append(vencedor)
     
+    def remove_vencedor_na_list_vencedores(self,ant_venc):
+        self.vencedores.remove(ant_venc)
+        
     def set_par_escolhido(self, id_par):
         self.par_escolhido = self.pares[id_par]
     
     def verifica_atribuicao_de_ev(self,id_evento,num_startup):
         startup_escolhida = self.par_escolhido[num_startup]
         if not self.__atribuicao_evento(startup_escolhida,id_evento):
-            print('EVENTO JA REGISTRADO NAS STARTUPS!!')
+            print('EVENTO JA REGISTRADO NA STARTUP!!')
         if self.__verifica_se_startups_ja_tem_reg_do_ev(id_evento):
             return id_evento
         return -1
@@ -76,7 +85,9 @@ class Batalhas:
     
     def get_feitas(self):
         return self.batalhas_ja_feitas
-        
+    
+    def get_vencedores(self):
+        return self.vencedores    
         
 
         
