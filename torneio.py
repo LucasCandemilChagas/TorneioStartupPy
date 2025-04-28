@@ -1,5 +1,6 @@
 import random
 import os
+import time
 
 from startups import Startups
 from startups import StartupsTeste
@@ -102,12 +103,23 @@ def menu_de_escolha_eventos(mod_menu_ev):
         print('5 - Fake news no pitch')    
     else: 
         print('5 - Fake news no pitch (indisponivel)    REGISTRADO EM TODAS AS STARTUPS!!')    
-        
+
+def display_vencedor(par):
+    print("Batalha finaizada!!!")
+    if par[0].pontos > par[1].pontos:
+        print(par[0].nome)  
+        print(f'Eh a vencedora!! Com {par[0].pontos}p')
+    else:
+        print(par[1].nome)  
+        print(f'Eh a vencedora!! Com {par[1].pontos}p')
+    
+             
 
 while True:
     min_regs_atingido = 0 
     quer_sair = 0  
     try:
+        # Cadastro das Startups ######################
         menu_inicial()
         while True:
             op = int(input('Digite aqui: '))
@@ -118,12 +130,13 @@ while True:
                 break
             else:
                 print('Numero Invalido!!')
-         
+        #############################################
+        
         comecar_batalha = int(input('Digite 1 para comecar as batalhas: '))
         if comecar_batalha == 1:
             b = Batalhas()
             b.sortea_pares(startups_list)
-            
+            # Batalhas ################################################
             while True:
                 pares = b.get_pares()
                 limpar_console()
@@ -135,7 +148,7 @@ while True:
                 startup = int(input('Digite aqui: '))
                 
                 mod_menu_ev = [0,0,0,0,0]
-                
+                # Rodada #######################################################
                 while True: 
                     menu_de_escolha_eventos(mod_menu_ev)
                     id_evento = int(input(f'Digite aqui para a startup {startup}: '))
@@ -146,8 +159,16 @@ while True:
                     if min_regs_atingido == 1:
                         term_bat = verifica_termino_da_batalha()
                         if term_bat:
-                            b.add_batalha_ja_feita()
-                            break
+                            if not b.verifica_igualdade_de_pontos():
+                                b.add_batalha_ja_feita()
+                                break
+                            else: 
+                                print('Startups estao empatadas!')
+                                print('Shark Fight iniciada!!')
+                                b.shark_fight()
+                                b.add_batalha_ja_feita()
+                                break
+                    # Escolha da proxima Startup ##################################
                     while True:
                         startup = int(input('Digite aqui a proxima startup: '))
                         min_regs_atingido = 1
@@ -158,10 +179,17 @@ while True:
                         
                         if b.verifica_se_nao_tem_como_reg_evs():
                             break
-                        
-                    limpar_console() 
+                    ################################################################
+                    
+                    limpar_console()
+                ##############################################################################        
+                    
+                limpar_console()
+                display_vencedor(b.get_par_escolhido())
+                time.sleep(5) 
                 if quer_sair:
-                    break                          
+                    break   
+            ##########################################################################################                       
         print(pares)
         limpar_console() 
     except ValueError:

@@ -49,6 +49,13 @@ class Batalhas:
             return id_evento
         return -1
     
+    def verifica_igualdade_de_pontos(self):
+        return self.par_escolhido[0].pontos == self.par_escolhido[1].pontos
+    
+    def shark_fight(self):
+        startup_que_recebera = self.par_escolhido[random.randint(0,1)]
+        startup_que_recebera.pontos += 2
+    
     def get_pares(self):
         return self.pares
     
