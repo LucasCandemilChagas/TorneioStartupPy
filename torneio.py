@@ -199,7 +199,7 @@ while True:
                 time.sleep(5)
                 if len(b.get_vencedores()) == len(pares):
                     print("Vencedor(es) desta rodada sao: ")
-                    startups_list = b.get_vencedores()
+                    b.set_pares_para_prox_fase(b.get_vencedores())
                     mostra_vencedores_de_rodada(startups_list)
                     time.sleep(10)
             ##########################################################################################                       

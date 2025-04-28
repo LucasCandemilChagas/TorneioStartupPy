@@ -80,6 +80,9 @@ class Batalhas:
     def get_pares(self):
         return self.pares
     
+    def set_pares_para_prox_fase(self,pares):
+        self.pares = pares
+    
     def get_par_escolhido(self):
         return self.par_escolhido
     
