@@ -1,4 +1,5 @@
 #Regras do Torneio 
+
 ##- Participam entre 4 e 8 startups, obrigatoriamente em número par. 
 ##- Cada startup inicia com 70 pontos. 
 ##- As rodadas são compostas por batalhas em pares, sorteados automaticamente pelo 
