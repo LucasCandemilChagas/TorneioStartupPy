@@ -47,6 +47,8 @@ def cadastra_startups():
             nome = input('Digite o Nome da Startup: ')
             slogan = input('Digite o Slogan da Startup: ')
             ano_fundacao = int(input('Digite o Ano de fundacao da Startup: '))
+            if ano_fundacao < 1899 or ano_fundacao > 2025:
+                raise ValueError
             participantes = int(input('Digite quantas pessoas irao participar (Entre 4 e 8 sendo numero par): '))
             if participantes % 2 != 0:
                 raise ValueError
@@ -117,6 +119,7 @@ def mostra_vencedores_de_rodada(venc_list):
         print(f'{venc.nome} -> {venc.pontos}p')
 
 while True:
+    torneio_acabou = 0
     quer_sair = 0  
     try:
         # Cadastro das Startups ######################
@@ -124,8 +127,8 @@ while True:
         while True:
             op = int(input('Digite aqui: '))
             if op == 1:
-                startups_list = defini_quantidade_startups_TESTE()
-                #startups_list = cadastra_startups()
+                #startups_list = defini_quantidade_startups_TESTE()
+                startups_list = cadastra_startups()
                 print('Startups cadastradas!!')
                 break
             elif op == 2:
@@ -144,24 +147,43 @@ while True:
             # Batalhas ################################################
             while True:
                 min_regs_atingido = 0 
+                
                 pares = b.get_pares()
+                
                 limpar_console()
+                
                 menu_escolha_de_batalha(pares,b)
-                id_par = int(input('Digite aqui a batalha desejada: '))
+                
+                while True:
+                    id_par = int(input('Digite aqui a batalha desejada: '))
+                    if id_par < len(pares)-1:
+                        break
+                    print('Batalha Invalida!!')
+                    
                 b.set_par_escolhido(id_par)
+                
                 limpar_console()
+                
                 menu_pos_selecao_batalha(id_par,pares)
+                
                 startup = int(input('Digite aqui: '))
                 
-                mod_menu_ev = [0,0,0,0,0]
+                mod_menu_ev = [0,0,0,0,0] # Lista que muda a interface de escolha de evento
+                
                 # Rodada #######################################################
                 while True: 
                     menu_de_escolha_eventos(mod_menu_ev)
+                    
                     id_evento = int(input(f'Digite aqui para a startup {startup}: '))
+                    
                     limpar_console() 
+                    
                     id_ev_ja_reg_nas_startups = b.verifica_atribuicao_de_ev(id_evento,startup)
+                    
                     verifica_se_ja_foi_reg_evento_nas_startups(id_ev_ja_reg_nas_startups,mod_menu_ev)
+                    
                     menu_pos_selecao_batalha(id_par,pares)
+                    
                     if min_regs_atingido == 1:
                         term_bat = verifica_termino_da_batalha()
                         if term_bat:
@@ -169,12 +191,14 @@ while True:
                                 b.add_batalha_ja_feita()
                                 break
                             else: 
+                                limpar_console()
                                 print('Startups estao empatadas!')
                                 print('Shark Fight iniciada!!')
                                 b.shark_fight()
                                 b.add_batalha_ja_feita()
                                 time.sleep(5)
                                 break
+                            
                     # Escolha da proxima Startup ##################################
                     while True:
                         startup = int(input('Digite aqui a proxima startup: '))
@@ -183,7 +207,6 @@ while True:
                             print('Startup tem todos os eventos ja!!')
                         else:
                             break
-                        
                         if b.verifica_se_nao_tem_como_reg_evs():
                             break
                     ################################################################
@@ -192,18 +215,31 @@ while True:
                 ##############################################################################        
                     
                 limpar_console()
+                
+                # Ve quem venceu e mostra na tela ###########################################
                 vencedor = b.get_vencedor_com_pontos_bonus()
                 b.add_vencedor_na_list_vencedores(vencedor) 
                 display_vencedor(vencedor)
                 print("Por favor aguarde, NAO APERTE NENHUM BOTAO")
+                
                 time.sleep(5)
-                if len(b.get_vencedores()) == len(pares):
+                if len(b.get_vencedores()) == len(pares) and len(b.get_vencedores()) > 1:
                     print("Vencedor(es) desta rodada sao: ")
                     b.set_pares_para_prox_fase(b.get_vencedores())
-                    mostra_vencedores_de_rodada(startups_list)
-                    time.sleep(10)
+                    mostra_vencedores_de_rodada(b.get_vencedores())
+                    time.sleep(5)
+                elif len(b.get_vencedores()) == 1:
+                    limpar_console()
+                    print(f'A startup vencedora do torneio de Startup eh {b.get_vencedores()[0].nome}')
+                    time.sleep(5)
+                    torneio_acabou = 1
+                    break
+                ###################################################################################
+                
             ##########################################################################################                       
-        limpar_console() 
+        limpar_console()
+        if torneio_acabou:
+            raise KeyboardInterrupt 
     except ValueError:
         continue
     except KeyboardInterrupt:
