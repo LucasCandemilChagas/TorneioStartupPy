@@ -1,4 +1,3 @@
-import random
 import os
 import time
 
@@ -15,28 +14,16 @@ def limpar_console():
         os.system('clear')
 
 def defini_quantidade_startups_TESTE():
-    return [StartupsTeste() for _ in range(random.choice([4,6,8]))]
+    return [StartupsTeste() for _ in range(4)]
 
 def verifica_quant_de_startups(startups):
     return len(startups) >= 4 and len(startups) % 2 == 0
-
-def verifica_termino_da_batalha():
-    op = input('Deseja terminar batalha? s/qualquer outra tecla: ').lower()
-    if op == 's':
-        return True
-    return False
 
 def verifica_saida():
     op = input('Deseja sair? s/qualquer outra tecla: ').lower()
     if op == 's':
         return True
     return False
-
-def verifica_se_ja_foi_reg_evento_nas_startups(id_ev_ja_reg_nas_startups,mod_menu_ev):
-    if id_ev_ja_reg_nas_startups > 0 and mod_menu_ev[id_ev_ja_reg_nas_startups-1] != 1:
-        mod_menu_ev[id_ev_ja_reg_nas_startups-1] = 1
-
-
 
 def cadastra_startups():
     startups = []
@@ -47,6 +34,8 @@ def cadastra_startups():
             nome = input('Digite o Nome da Startup: ')
             slogan = input('Digite o Slogan da Startup: ')
             ano_fundacao = int(input('Digite o Ano de fundacao da Startup: '))
+            if ano_fundacao < 1899 or ano_fundacao > 2025:
+                raise ValueError
             participantes = int(input('Digite quantas pessoas irao participar (Entre 4 e 8 sendo numero par): '))
             if participantes % 2 != 0:
                 raise ValueError
@@ -66,21 +55,6 @@ def menu_inicial():
     print('Escolha entre as opcoes abaixo:')
     print('1 - Cadastrar Startup')
     print('2 - Sair')
-
-def menu_escolha_de_batalha(pares,batalhas):
-    print('Escolha entre essas batalhas')
-    for ind, par in enumerate(pares):
-        if par not in batalhas.get_feitas():  
-            print(f'Batalha {ind} - {par[0].nome} vs {par[1].nome}')   
-    print('Caso queira sair aperte Ctrl+C')
-    
-def menu_pos_selecao_batalha(op, pares):
-    
-    print('Batalha selecionada!!')
-    print(f'Par - {pares[op][0].nome} ({pares[op][0].pontos}p) vs {pares[op][1].nome} ({pares[op][1].pontos}p)')
-    print('Escolha umas das startup respectivamente (0-1)')
-    print('Para atribuir um evento!!')
-    print('Caso queira sair aperte Ctrl+C')
 
 def menu_de_escolha_eventos(mod_menu_ev):
     limpar_console()  
@@ -106,17 +80,9 @@ def menu_de_escolha_eventos(mod_menu_ev):
     else: 
         print('5 - Fake news no pitch (indisponivel)    REGISTRADO EM TODAS AS STARTUPS!!')    
     print('Caso queira sair aperte Ctrl+C')
-    
-def display_vencedor(vencedor):
-    print("Batalha finaizada!!!")
-    print(vencedor.nome)  
-    print(f'Eh a vencedora!! Com {vencedor.pontos}p')
-    
-def mostra_vencedores_de_rodada(venc_list):
-    for venc in venc_list:
-        print(f'{venc.nome} -> {venc.pontos}p')
-
+           
 while True:
+    torneio_acabou = False
     quer_sair = 0  
     try:
         # Cadastro das Startups ######################
@@ -144,68 +110,65 @@ while True:
             # Batalhas ################################################
             while True:
                 min_regs_atingido = 0 
+                
                 pares = b.get_pares()
+                
                 limpar_console()
-                menu_escolha_de_batalha(pares,b)
-                id_par = int(input('Digite aqui a batalha desejada: '))
+                
+                b.menu_escolha_de_batalha()
+                
+                while True:
+                    id_par = int(input('Digite aqui a batalha desejada: '))
+                    if id_par < len(pares):
+                        break
+                    print('Batalha Invalida!!')
+                    
                 b.set_par_escolhido(id_par)
+                
                 limpar_console()
-                menu_pos_selecao_batalha(id_par,pares)
+                
+                b.menu_pos_selecao_batalha(id_par)
+                
                 startup = int(input('Digite aqui: '))
                 
-                mod_menu_ev = [0,0,0,0,0]
+                mod_menu_ev = [0,0,0,0,0] # Lista que muda a interface de escolha de evento
+                
                 # Rodada #######################################################
                 while True: 
                     menu_de_escolha_eventos(mod_menu_ev)
+                    
                     id_evento = int(input(f'Digite aqui para a startup {startup}: '))
+                    
                     limpar_console() 
-                    id_ev_ja_reg_nas_startups = b.verifica_atribuicao_de_ev(id_evento,startup)
-                    verifica_se_ja_foi_reg_evento_nas_startups(id_ev_ja_reg_nas_startups,mod_menu_ev)
-                    menu_pos_selecao_batalha(id_par,pares)
-                    if min_regs_atingido == 1:
-                        term_bat = verifica_termino_da_batalha()
-                        if term_bat:
-                            if not b.verifica_igualdade_de_pontos():
-                                b.add_batalha_ja_feita()
-                                break
-                            else: 
-                                print('Startups estao empatadas!')
-                                print('Shark Fight iniciada!!')
-                                b.shark_fight()
-                                b.add_batalha_ja_feita()
-                                time.sleep(5)
-                                break
-                    # Escolha da proxima Startup ##################################
-                    while True:
-                        startup = int(input('Digite aqui a proxima startup: '))
-                        min_regs_atingido = 1
-                        if len(b.get_par_escolhido()[startup].eventos) == 5:
-                            print('Startup tem todos os eventos ja!!')
-                        else:
-                            break
-                        
-                        if b.verifica_se_nao_tem_como_reg_evs():
-                            break
-                    ################################################################
+                    ver_batalha_acabada, mod_menu_ev, startup, min_regs_atingido = b.realiza_batalha(id_evento,pares,mod_menu_ev,id_par,min_regs_atingido, startup)
+                    if ver_batalha_acabada:
+                        break
                     
                     limpar_console()
                 ##############################################################################        
                     
                 limpar_console()
-                vencedor = b.get_vencedor_com_pontos_bonus()
-                b.add_vencedor_na_list_vencedores(vencedor) 
-                display_vencedor(vencedor)
-                print("Por favor aguarde, NAO APERTE NENHUM BOTAO")
+                
+                # Ve quem venceu e mostra na tela ###########################################
+                
+                b.realiza_resultados_batalha()
+                
                 time.sleep(5)
-                if len(b.get_vencedores()) == len(pares):
-                    print("Vencedor(es) desta rodada sao: ")
-                    b.set_pares_para_prox_fase(b.get_vencedores())
-                    mostra_vencedores_de_rodada(startups_list)
-                    time.sleep(10)
+                
+                torneio_acabou = b.realiza_resultados_rodada()
+                
+                if torneio_acabou:
+                    break
+                
+                ###################################################################################
+                
             ##########################################################################################                       
-        limpar_console() 
+        limpar_console()
+        if torneio_acabou:
+            break
     except ValueError:
         continue
     except KeyboardInterrupt:
         print('PROGRAMA ENCERRADO ATE!!')
         break
+print('PROGRAMA ENCERRADO ATE!!')
