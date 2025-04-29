@@ -90,8 +90,8 @@ while True:
         while True:
             op = int(input('Digite aqui: '))
             if op == 1:
-                startups_list = defini_quantidade_startups_TESTE()
-                #startups_list = cadastra_startups()
+                #startups_list = defini_quantidade_startups_TESTE()
+                startups_list = cadastra_startups()
                 print('Startups cadastradas!!')
                 break
             elif op == 2:
